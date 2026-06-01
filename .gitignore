@@ -1,0 +1,13 @@
+# Carpeta interna de Claude Code
+.claude/
+
+# macOS
+.DS_Store
+
+# Editores
+.vscode/
+*.swp
+
+# Salidas temporales
+*.tmp
+Untitled-*
