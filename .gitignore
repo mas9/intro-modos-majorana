@@ -11,3 +11,7 @@
 # Salidas temporales
 *.tmp
 Untitled-*
+
+# Documentos internos de la charla (NO publicar en GitHub)
+charla_UNIR_qubits_topologicos_Majorana1.md
+charla_UNIR_resumen_para_coordinador.md
