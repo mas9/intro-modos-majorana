@@ -154,7 +154,7 @@ end
 
 # ╔═╡ fef756d6-5d9f-11f1-aaaf-778e2741c1a3
 md"""
-## 3. De fermiones a Majoranas
+## 3. De electrones a modos de Majorana
 
 Cada fermión se descompone en dos operadores de Majorana hermíticos:
 ```math
@@ -269,6 +269,38 @@ let
 		xlabel = "sitio j", ylabel = "|γ(j)|²",
 		title = "μ=$(round(μ_ed,digits=2))  →  $estado")
 	plot!(sites, γR; m = :square, ms = 3, label = "γ_der")
+end
+
+# ╔═╡ b1a2c3d4-0001-11f1-aaaa-0123456789ab
+md"""
+**Bandas de energía frente a ``\mu``:** en vez de fijar ``\mu`` y mirar el índice del
+autovalor (sec. 2), barremos ``\mu`` y dibujamos *todos* los autovalores de ``H_{\rm BdG}``.
+Dentro de la fase topológica (``|\mu|<2t``) un par de bandas se **pega a ``E=0``**: es el
+modo de Majorana. Fuera, el gap se abre y no hay nada a energía cero. Mueve ``N`` y
+``\Delta`` para ver cómo el modo cero se separa mejor del continuo al crecer la cadena.
+
+``\Delta`` = $(@bind Δ_bd Slider(0:0.1:2, default = 1.0, show_value = true))
+
+``N`` = $(@bind N_bd Slider(4:80, default = 30, show_value = true))
+"""
+
+# ╔═╡ b1a2c3d4-0002-11f1-aaaa-0123456789ab
+let
+	t = 1.0
+	mus = range(-4, 4, length = 241)
+	# cada fila: los 2N autovalores ordenados de H_BdG para ese μ
+	bands = reduce(vcat,
+		[sort(eigvals(Hermitian(kitaev_bdg(N_bd, t, μ, Δ_bd))))' for μ in mus])
+	E0 = [minimum(abs.(bands[i, :])) for i in 1:length(mus)]   # banda más cercana a E=0
+	plot(mus, bands; lw = 1, c = 1, alpha = 0.5, legend = false, size = (720, 460),
+		xlabel = "μ / t", ylabel = "Energía E", ylim = (-4, 4),
+		title = "Bandas de energía vs μ  (N=$N_bd, Δ=$(round(Δ_bd,digits=2)))")
+	vspan!([-2, 2]; c = 2, alpha = 0.10)
+	vline!([-2, 2]; c = :red, ls = :dash, lw = 0.8)
+	hline!([0]; c = :black, ls = :dash, lw = 0.6)
+	plot!(mus, E0; c = :orange, lw = 2)                        # modo de borde (±|E₀|)
+	plot!(mus, -E0; c = :orange, lw = 2)
+	annotate!(0, 3.4, text("TOPOLÓGICA", :green, 8))
 end
 
 # ╔═╡ fef75744-5d9f-11f1-b376-f32645221222
@@ -390,7 +422,7 @@ end
 let
 	N, t = 30, 1.0
 	mus = range(-4, 4, length = 121)
-	Δs  = range(-2, 2, length = 121)
+	Δs  = range(-10, 10, length = 121)
 	GAP = [minimum(abs.(eigvals(Hermitian(kitaev_bdg(N, t, μ, Δ))))) for Δ in Δs, μ in mus]
 	heatmap(mus, Δs, GAP; c = :viridis, size = (680, 520), colorbar_title = "min|E|",
 		xlabel = "μ / t", ylabel = "Δ / t",
@@ -2053,6 +2085,8 @@ version = "1.13.0+0"
 # ╠═fef75726-5d9f-11f1-9dbc-0be9347a1a2b
 # ╟─fef75730-5d9f-11f1-bd62-3de0a8163c23
 # ╠═fef7573c-5d9f-11f1-ad24-93beaebf9fb0
+# ╟─b1a2c3d4-0001-11f1-aaaa-0123456789ab
+# ╠═b1a2c3d4-0002-11f1-aaaa-0123456789ab
 # ╟─fef75744-5d9f-11f1-b376-f32645221222
 # ╠═fef7574e-5d9f-11f1-a49e-63a88d4af75e
 # ╠═fef75762-5d9f-11f1-a639-1b0db8fa8e2d
